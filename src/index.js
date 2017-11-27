@@ -1,17 +1,17 @@
 // @flow
+const express = require('express');
+const app = express();
 
 const token = process.env.SLACK_API_TOKEN || '';
+const port = process.env.PORT || 5000;
 
-console.log(token);
+const client = require('@slack/client');
 
-function gg(x: number): string {
-	return '';
-}
+console.log(client);
 
-function hh(s: string): number {
-	return 1;
-}
 
-async function g(s: string): Promise<string> {
-	return Promise.resolve('');
-}
+app.get('/', (req, res) => {
+	res.send('gg');
+});
+
+app.listen(port, () => console.log(`Listening on ${port}`));

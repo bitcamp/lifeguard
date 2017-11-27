@@ -1,21 +1,25 @@
 {
   "name": "bitcamp-slack-mentorship",
   "version": "1.0.0",
+  "engines": {
+    "node": "7.5.0"
+  },
   "description": "The Slack mentorship app integration for easy collaboration between hackers and mentors.",
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel src/ -d lib/",
+    "start": "npm uninstall -g babel && npm install --save-dev babel-cli && ./node_modules/.bin/babel-node src/index.js",
+    "run": "./node_modules/.bin/babel-node src/index.js",
     "flow": "flow"
   },
   "author": "Allen Cheng",
   "license": "MIT",
   "dependencies": {
-    "@slack/client": "^3.14.2"
-  },
-  "devDependencies": {
+    "@slack/client": "^3.14.2",
     "babel-cli": "^6.26.0",
     "babel-preset-flow": "^6.23.0",
+    "express": "^4.16.2",
     "flow-bin": "^0.59.0"
-  }
+  },
+  "devDependencies": {}
 }
