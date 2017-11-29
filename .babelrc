@@ -1,4 +1,3 @@
 {
-  "presets": ["flow"]
+  "presets": ["es2017", "flow"]
 }
-
