@@ -4,6 +4,8 @@ Lifeguard is a slack mentorship app for easy collaboration between hackers and m
 # Technologies
 We'd love for you to contribute! Lifeguard makes use of Node.js with Babel ES2017, and uses [Flow](https://flow.org/en/) for static type checking.
 
+Just run `npm run flow` after installing `node_modules` to start a Flow server and check for type errors throughout the repository.
+
 # Requirements and Installation
 For both development and deployment, run `npm install` to install the required `node_modules`, then just run `npm run start` to start the server.
 
