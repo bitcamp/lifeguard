@@ -58,11 +58,12 @@ const processLifeguardCommand = async (client: SlackClient, res: any, teamId: st
 	sendRequestAcknowledgedResponse(res, firstName);
 
 	if (textTokens[0] === 'list') {
-        const skills: Array<string> = lifeguardPool.getAllSkills();
+        let skills: Array<string> = lifeguardPool.getAllSkills();
         skills.sort();
+        skills = skills.map((s) => '`' + s + '`'); // can't do string interpolation here...
 
         if (skills.length > 0) {
-            sendDelayedMessage(responseUrl, `The skills we currently have include: ${skills.join(',')}`);
+            sendDelayedMessage(responseUrl, `The skills we currently have include: ${skills.join(', ')}`);
         } else {
             sendDelayedMessage(responseUrl, 'There are currently no skills available!');
         }
@@ -143,8 +144,11 @@ communicate with your mentor.`);
 	        sendDelayedMessage(responseUrl, 'Your status is already set to away/busy!');
         }
     } else if (textTokens[0] === 'whoami') {
-        const skills: Array<string> = lifeguardPool.getSkillsForMentor(userId);
-        if (skills.length > 0) {
+        let skills: Array<string> = lifeguardPool.getSkillsForMentor(userId);
+        skills.sort();
+		skills = skills.map((s) => '`' + s + '`'); // can't do string interpolation here...
+
+		if (skills.length > 0) {
             sendDelayedMessage(responseUrl, `You are currently a mentor for ${skills.join(', ')}`);
         } else {
             sendDelayedMessage(responseUrl, 'You are not currently a mentor for any skills!');
