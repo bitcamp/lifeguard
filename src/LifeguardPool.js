@@ -1,6 +1,11 @@
 // @flow
 
 // haha, get it? pool?
+
+/**
+ * This class manages the mentor queue and oversees all mentor assignments and
+ * keeps track of specialized skills by mentors.
+ */
 class LifeguardPool {
     // maps skill tags to user ids of mentors
     _skillsToMentors: Map<string, Array<string>>;
@@ -21,17 +26,31 @@ class LifeguardPool {
         this._busyMentors = new Set();
     }
 
-    getAllSkills(): Array<string> {
+	/**
+     * Return an array of all the skills that a mentor is marked with.
+	 */
+	getAllSkills(): Array<string> {
         return Array.from(this._skillsToMentors.keys());
     }
 
-    addMentor(userId: string, skill: string): void {
+	/**
+     * Add a knowledgeable skill to the specified mentor.
+	 */
+	addMentor(userId: string, skill: string): void {
+        // mark mentor as available again if busy
+        this.finishMentoring(userId);
+
         // Add skill to mentors map
         if (!this._mentorsToSkills.has(userId)) {
             this._mentorsToSkills.set(userId, [skill]);
         } else {
             const skills: ?Array<string> = this._mentorsToSkills.get(userId);
             if (skills != null) {
+                if (skills.indexOf(skill) !== -1) {
+                    // This mentor already knows this skill, don't do anything.
+                    return;
+                }
+
                 skills.push(skill);
                 this._mentorsToSkills.set(userId, skills);
             }
@@ -71,34 +90,15 @@ class LifeguardPool {
                 queue = this._removeBusyMentors(queue);
             }
 
-            // dequeue the first mentor
             if (!queue) {
                 return null;
             }
 
-            const mentor = queue.shift();
+	        // dequeue the first mentor
+	        const mentor = queue.shift();
 
-            // this mentor is now busy
-            this._busyMentors.add(mentor);
-
-            // remove this mentor from all the other queues
-            const skills: ?Array<string> = this._mentorsToSkills.get(mentor);
-            if (skills) {
-                for (const sk of skills) {
-                    if (sk === skill) {
-                        continue;
-                    }
-
-                    const currSkillQueue: ?Array<string> = this._skillsToMentorsQueue.get(sk);
-                    if (currSkillQueue) {
-                        const idx = currSkillQueue.indexOf(mentor);
-                        if (idx !== -1) {
-                            currSkillQueue.splice(idx, 1);
-                            this._skillsToMentorsQueue.set(sk, currSkillQueue);
-                        }
-                    }
-                }
-            }
+            // mark mentor as busy
+            this.setBusyMentor(mentor);
 
             // update with new queue
             this._skillsToMentorsQueue.set(skill, queue);
@@ -118,6 +118,32 @@ class LifeguardPool {
         }
 
         return ret;
+    }
+
+    setBusyMentor(userId: string): boolean {
+	    if (this._busyMentors.has(userId)) {
+		    return false;
+	    }
+
+	    // this mentor is now busy
+	    this._busyMentors.add(userId);
+
+	    // remove this mentor from all the other queues
+	    const skills: ?Array<string> = this._mentorsToSkills.get(userId);
+	    if (skills) {
+		    for (const sk of skills) {
+			    const currSkillQueue: ?Array<string> = this._skillsToMentorsQueue.get(sk);
+			    if (currSkillQueue) {
+				    const idx = currSkillQueue.indexOf(userId);
+				    if (idx !== -1) {
+					    currSkillQueue.splice(idx, 1);
+					    this._skillsToMentorsQueue.set(sk, currSkillQueue);
+				    }
+			    }
+		    }
+	    }
+
+	    return true;
     }
 
     finishMentoring(userId: string): boolean {

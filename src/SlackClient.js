@@ -94,7 +94,7 @@ class SlackClient {
 
     leaveChannel(channel: string): Promise<void> {
 	    return new Promise((resolve) => {
-		    this.client.groups.leave(channel, (err, res) => {
+		    this.client.groups.leave(channel, (err) => {
 			    if (err) {
 				    throw err;
 			    } else {

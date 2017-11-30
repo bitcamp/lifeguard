@@ -1,7 +1,11 @@
 import type {UserResponse, GroupResponse} from './slack_client_responses.flow';
-const {SlackClient} = require('./SlackClient');
-const {sendDelayedMessage, sendErrorResponse, NOT_ENOUGH_ARGUMENTS_MESSAGE, ADMIN_PASSWORD, BAD_ADMIN_REQUEST_MESSAGE, BAD_REQUEST_MESSAGE} = require('./util');
+
 const LifeguardPool = require('./LifeguardPool');
+const {SlackClient} = require('./SlackClient');
+const {sendDelayedMessage,
+    sendErrorResponse,
+    NOT_ENOUGH_ARGUMENTS_MESSAGE,
+    ADMIN_PASSWORD, BAD_ADMIN_REQUEST_MESSAGE, BAD_REQUEST_MESSAGE} = require('./util');
 
 const lifeguardPools: Map<string, LifeguardPool> = new Map();
 
@@ -21,7 +25,7 @@ Want to add yourself as a mentor? Questions about this Slack app? Please direct 
 
 const processLifeguardCommand = async (client: SlackClient, res: any, teamId: string,
                                        userId: string, responseUrl: string,
-                                       textTokens: Array<string>): Promise<void> => {
+                                       textTokens: ?Array<string>): Promise<void> => {
     function getFirstName(user: UserResponse): string {
         const realName: string = user.user.real_name;
         const tokenized: Array<string> = realName.split(/\s+/);
@@ -31,7 +35,7 @@ const processLifeguardCommand = async (client: SlackClient, res: any, teamId: st
     const user: UserResponse = await client.getUserInfo(userId);
     const firstName: string = getFirstName(user);
 
-    if (textTokens[0] === 'help') {
+    if (textTokens == null || textTokens.length === 0 || textTokens[0] === 'help') {
         const helpText = `Hi ${firstName}, ${HELP_TEXT}`;
         return res.json({text: helpText});
     }

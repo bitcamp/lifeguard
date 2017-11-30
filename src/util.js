@@ -6,6 +6,7 @@ const ADMIN_PASSWORD: string = 'bitcampsux';
 const BAD_ADMIN_REQUEST_MESSAGE: string = 'Stop trying to mess with Lifeguard!';
 const NOT_ENOUGH_ARGUMENTS_MESSAGE: string = 'The command you entered requires more arguments.';
 
+
 const sendErrorResponse = (res: any, message: string, delayed: boolean=false, responseUrl: string=''): any => {
 	if (delayed) {
 		return sendDelayedMessage(responseUrl, message);
