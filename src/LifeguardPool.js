@@ -1,10 +1,11 @@
 // @flow
 
-// haha, get it? pool?
 
 /**
  * This class manages the mentor queue and oversees all mentor assignments and
  * keeps track of specialized skills by mentors.
+ *
+ * haha, get it? pool?
  */
 class LifeguardPool {
     // maps skill tags to user ids of mentors
@@ -27,7 +28,7 @@ class LifeguardPool {
     }
 
 	/**
-     * Return an array of all the skills that a mentor is marked with.
+     * Return an array of all the skills that mentors are tagged with.
 	 */
 	getAllSkills(): Array<string> {
         return Array.from(this._skillsToMentors.keys());
@@ -73,13 +74,23 @@ class LifeguardPool {
         }
     }
 
-    findMentor(skill: string): ?string {
+	/**
+     * Find a mentor at the front of the queue for a specified skill.
+     * Mark the mentor with a 'busy' status.
+     *
+     * Throw an Error if no mentor knows that skill.
+     *
+	 * Return the mentor that was selected, or null if no mentor is available
+     * to help out with that skill.
+	 */
+	findMentor(skill: string): ?string {
         if (!this._skillsToMentorsQueue.has(skill)) {
             throw new Error('The skill requested does not exist!');
         }
 
         const allMentors: ?Array<string> = this._skillsToMentors.get(skill);
         let queue: ?Array<string> = this._skillsToMentorsQueue.get(skill);
+
         if (queue != null && allMentors != null) {
             if (queue.length === 0) {
                 // If nobody left in the queue, reset the queue...
@@ -120,7 +131,14 @@ class LifeguardPool {
         return ret;
     }
 
-    setBusyMentor(userId: string): boolean {
+	/**
+     * Mark a mentor with a busy status.
+     * Note that it is NOT an error for a user without any mentor skills to be "busy."
+     *
+     * Return true is the mentor was successfully marked as busy.
+     * Return false if the mentor is already marked as busy.
+	 */
+	setBusyMentor(userId: string): boolean {
 	    if (this._busyMentors.has(userId)) {
 		    return false;
 	    }
@@ -146,7 +164,15 @@ class LifeguardPool {
 	    return true;
     }
 
-    finishMentoring(userId: string): boolean {
+	/**
+     * Mark a mentor with a busy status to be available again.
+     *
+	 * Return true if the mentor was successfully marked as available and
+     * back on the queue for more tasks.
+     *
+     * Return false if the mentor is already available.
+	 */
+	finishMentoring(userId: string): boolean {
         if (!this._busyMentors.has(userId)) {
             return false;
         }
@@ -169,7 +195,10 @@ class LifeguardPool {
         return true;
     }
 
-    getSkillsForMentor(userId: string): Array<string> {
+	/**
+     * Return an array of all the skills that a mentor is marked with.
+	 */
+	getSkillsForMentor(userId: string): Array<string> {
         const ret: ?Array<string> = this._mentorsToSkills.get(userId);
         return ret ? ret : [];
     }
