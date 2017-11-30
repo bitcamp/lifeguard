@@ -115,10 +115,10 @@ const processLifeguardCommand = async (client: SlackClient, res: any, teamId: st
 			const inviteMentorPromise = client.inviteUserToChannel(newChannelId, mentorId);
 			const inviteUserPromise = client.inviteUserToChannel(newChannelId, userId);
 	        const postMessagePromise = client.postMessage(newChannelId, `Hi ${firstName} \
- and ${mentorFirstName}!`);
+and ${mentorFirstName}!`);
 	        const postMessagePromise2 = client.postMessage(newChannelId, `${mentorFirstName}, here is \
 ${firstName}'s question: *${question}*. After you finish helping ${firstName}, please type \
-\`/lifeguard done\` to mark yourself as available for helping out your next hacker!`);
+\`/lifeguard available\` to mark yourself as available for helping out your next hacker!`);
 
 	        await Promise.all([inviteMentorPromise, inviteUserPromise, postMessagePromise, postMessagePromise2]);
 			await client.leaveChannel(newChannelId);
@@ -133,7 +133,7 @@ communicate with your mentor.`);
         if (wasABusyMentor) {
 	        sendDelayedMessage(responseUrl, `You have been released! You are now available to take on more tasks.`);
         } else {
-            sendDelayedMessage(responseUrl, 'You are currently not helping out anyone!');
+            sendDelayedMessage(responseUrl, 'Your status is not available!');
         }
     } else if (textTokens[0] === 'away') {
 	    const success: boolean = lifeguardPool.setBusyMentor(userId);
