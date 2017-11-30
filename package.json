@@ -7,7 +7,7 @@
   "description": "The Slack mentorship app integration for easy collaboration between hackers and mentors.",
   "main": "lib/index.js",
   "scripts": {
-    "start": "npm uninstall -g babel && npm install --save-dev babel-cli babel-preset-es2017 && ./node_modules/.bin/babel-node src/index.js",
+    "start": "./node_modules/.bin/babel-node src/index.js",
     "run": "./node_modules/.bin/babel-node src/index.js",
     "flow": "flow"
   },
@@ -16,7 +16,7 @@
   "dependencies": {
     "@slack/client": "^3.14.2",
     "babel-cli": "^6.26.0",
-    "babel-preset-flow": "^6.23.0",
+    "babel-preset-es2017": "^6.24.1",
     "body-parser": "^1.18.2",
     "dotenv": "^4.0.0",
     "express": "^4.16.2",
@@ -25,7 +25,6 @@
     "request-promise-native": "^1.0.5"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-es2017": "^6.24.1"
+    "babel-preset-flow": "^6.23.0"
   }
 }
