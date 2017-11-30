@@ -16,6 +16,7 @@ const sendErrorResponse = (res: any, message: string, delayed: boolean=false, re
 };
 
 function sendDelayedMessage(responseUrl: string, text: string): void {
+const sendDelayedMessage = (responseUrl: string, text: string): void => {
 	const options = {
 		method: 'POST',
 		uri: responseUrl,
