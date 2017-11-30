@@ -15,7 +15,7 @@ const {processLifeguardCommand} = require('./poolHandler');
 const {sendErrorResponse, INTERNAL_ERROR_MESSAGE, BAD_REQUEST_MESSAGE} = require('./util');
 
 const token: string = process.env.SLACK_API_TOKEN || '';
-const port: string = process.env.PORT || "5000";
+const port: string = process.env.PORT || '5000';
 const client: SlackClient = getClient(token);
 
 
