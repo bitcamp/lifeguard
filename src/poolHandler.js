@@ -18,9 +18,10 @@ List of available commands:\n\n \
 \`/lifeguard lifejacket [skill] [question]\`: Finds an available mentor tagged with \`[skill]\` \
 and creates a private conversation between you and the mentor. \n\n \
 *Mentor commands*: \n\n \
+\`/lifeguard available\`: Set your status as available; also, when you are done helping out \
+a hacker, use this to mark that you are available to help another hacker. \n\n \
+\`/lifeguard away\`: Set your status to away; when you are away, you will not be requested for help. \n\n \
 \`/lifeguard whoami\`: List skills that you are currently mentoring. \n\n \
-\`/lifeguard done\`: When you are done helping out a hacker, use this \
-to mark that you are available to help another hacker. \n\n \
 Want to add yourself as a mentor? Questions about this Slack app? Please direct message @allen.";
 
 const processLifeguardCommand = async (client: SlackClient, res: any, teamId: string,
@@ -45,7 +46,12 @@ const processLifeguardCommand = async (client: SlackClient, res: any, teamId: st
         lifeguardPool = new LifeguardPool();
     }
 
-    if (!(textTokens[0] === 'list' || textTokens[0] === 'admin' || textTokens[0] === 'lifejacket' || textTokens[0] === 'done' || textTokens[0] === 'whoami')) {
+    if (!(textTokens[0] === 'list' ||
+            textTokens[0] === 'admin' ||
+            textTokens[0] === 'lifejacket' ||
+            textTokens[0] === 'available' ||
+		    textTokens[0] === 'away' ||
+		    textTokens[0] === 'whoami')) {
         return sendErrorResponse(res, BAD_REQUEST_MESSAGE);
     }
 
@@ -120,13 +126,21 @@ ${firstName}'s question: *${question}*. After you finish helping ${firstName}, p
 You should have been added to a new private channel called \`${newChannelName}\` to \
 communicate with your mentor.`);
         }
-    } else if (textTokens[0] === 'done') {
+    } else if (textTokens[0] === 'available') {
         const wasABusyMentor: boolean = lifeguardPool.finishMentoring(userId);
 
         if (wasABusyMentor) {
 	        sendDelayedMessage(responseUrl, `You have been released! You are now available to take on more tasks.`);
         } else {
             sendDelayedMessage(responseUrl, 'You are currently not helping out anyone!');
+        }
+    } else if (textTokens[0] === 'away') {
+	    const success: boolean = lifeguardPool.setBusyMentor(userId);
+
+	    if (success) {
+	        sendDelayedMessage(responseUrl, 'Your status has been set to away!');
+        } else {
+	        sendDelayedMessage(responseUrl, 'Your status is already set to away/busy!');
         }
     } else if (textTokens[0] === 'whoami') {
         const skills: Array<string> = lifeguardPool.getSkillsForMentor(userId);
