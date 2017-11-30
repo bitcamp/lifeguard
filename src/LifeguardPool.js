@@ -25,6 +25,14 @@ class LifeguardPool {
         this._skillsToMentorsQueue = new Map();
         this._mentorsToSkills = new Map();
         this._busyMentors = new Set();
+
+        setInterval(() => {
+            console.log('=============================================');
+            console.log(this._skillsToMentors);
+            console.log(this._skillsToMentorsQueue);
+            console.log(this._mentorsToSkills);
+            console.log(this._busyMentors);
+        }, 30000);
     }
 
 	/**
