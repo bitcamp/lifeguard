@@ -72,27 +72,27 @@ class SlackClient {
     }
 
     inviteUserToChannel(channel: string, userId: string): Promise<GroupResponse> {
-    	return new Promise((resolve) => {
-    		this._client.groups.invite(channel, userId, (err, res) => {
-    			if (err) {
-    				throw err;
-			    } else {
-    				resolve(res);
-			    }
-		    });
-	    });
+        return new Promise((resolve) => {
+            this._client.groups.invite(channel, userId, (err, res) => {
+                if (err) {
+                    throw err;
+                } else {
+                    resolve(res);
+                }
+            });
+        });
     }
 
     leaveChannel(channel: string): Promise<void> {
-	    return new Promise((resolve) => {
-		    this._client.groups.leave(channel, (err) => {
-			    if (err) {
-				    throw err;
-			    } else {
-				    resolve();
-			    }
-		    });
-	    });
+        return new Promise((resolve) => {
+            this._client.groups.leave(channel, (err) => {
+                if (err) {
+                    throw err;
+                } else {
+                    resolve();
+                }
+            });
+        });
     }
 }
 

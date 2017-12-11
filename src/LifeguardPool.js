@@ -35,17 +35,17 @@ class LifeguardPool {
         }, 30000);
     }
 
-	/**
+    /**
      * Return an array of all the skills that mentors are tagged with.
-	 */
-	getAllSkills(): Array<string> {
+     */
+    getAllSkills(): Array<string> {
         return Array.from(this._skillsToMentors.keys());
     }
 
-	/**
+    /**
      * Add a knowledgeable skill to the specified mentor.
-	 */
-	addMentor(userId: string, skill: string): void {
+     */
+    addMentor(userId: string, skill: string): void {
         // mark mentor as available again if busy
         this.finishMentoring(userId);
 
@@ -82,16 +82,16 @@ class LifeguardPool {
         }
     }
 
-	/**
+    /**
      * Find a mentor at the front of the queue for a specified skill.
      * Mark the mentor with a 'busy' status.
      *
      * Throw an Error if no mentor knows that skill.
      *
-	 * Return the mentor that was selected, or null if no mentor is available
+     * Return the mentor that was selected, or null if no mentor is available
      * to help out with that skill.
-	 */
-	findMentor(skill: string): ?string {
+     */
+    findMentor(skill: string): ?string {
         if (!this._skillsToMentorsQueue.has(skill)) {
             throw new Error('The skill requested does not exist!');
         }
@@ -113,8 +113,8 @@ class LifeguardPool {
                 return null;
             }
 
-	        // dequeue the first mentor
-	        const mentor = queue.shift();
+            // dequeue the first mentor
+            const mentor = queue.shift();
 
             // mark mentor as busy
             this.setBusyMentor(mentor);
@@ -139,48 +139,48 @@ class LifeguardPool {
         return ret;
     }
 
-	/**
+    /**
      * Mark a mentor with a busy status.
      * Note that it is NOT an error for a user without any mentor skills to be "busy."
      *
      * Return true is the mentor was successfully marked as busy.
      * Return false if the mentor is already marked as busy.
-	 */
-	setBusyMentor(userId: string): boolean {
-	    if (this._busyMentors.has(userId)) {
-		    return false;
-	    }
+     */
+    setBusyMentor(userId: string): boolean {
+        if (this._busyMentors.has(userId)) {
+            return false;
+        }
 
-	    // this mentor is now busy
-	    this._busyMentors.add(userId);
+        // this mentor is now busy
+        this._busyMentors.add(userId);
 
-	    // remove this mentor from all the other queues
-	    const skills: ?Array<string> = this._mentorsToSkills.get(userId);
-	    if (skills) {
-		    for (const sk of skills) {
-			    const currSkillQueue: ?Array<string> = this._skillsToMentorsQueue.get(sk);
-			    if (currSkillQueue) {
-				    const idx = currSkillQueue.indexOf(userId);
-				    if (idx !== -1) {
-					    currSkillQueue.splice(idx, 1);
-					    this._skillsToMentorsQueue.set(sk, currSkillQueue);
-				    }
-			    }
-		    }
-	    }
+        // remove this mentor from all the other queues
+        const skills: ?Array<string> = this._mentorsToSkills.get(userId);
+        if (skills) {
+            for (const sk of skills) {
+                const currSkillQueue: ?Array<string> = this._skillsToMentorsQueue.get(sk);
+                if (currSkillQueue) {
+                    const idx = currSkillQueue.indexOf(userId);
+                    if (idx !== -1) {
+                        currSkillQueue.splice(idx, 1);
+                        this._skillsToMentorsQueue.set(sk, currSkillQueue);
+                    }
+                }
+            }
+        }
 
-	    return true;
+        return true;
     }
 
-	/**
+    /**
      * Mark a mentor with a busy status to be available again.
      *
-	 * Return true if the mentor was successfully marked as available and
+     * Return true if the mentor was successfully marked as available and
      * back on the queue for more tasks.
      *
      * Return false if the mentor is already available.
-	 */
-	finishMentoring(userId: string): boolean {
+     */
+    finishMentoring(userId: string): boolean {
         if (!this._busyMentors.has(userId)) {
             return false;
         }
@@ -203,10 +203,10 @@ class LifeguardPool {
         return true;
     }
 
-	/**
+    /**
      * Return an array of all the skills that a mentor is marked with.
-	 */
-	getSkillsForMentor(userId: string): Array<string> {
+     */
+    getSkillsForMentor(userId: string): Array<string> {
         const ret: ?Array<string> = this._mentorsToSkills.get(userId);
         return ret ? ret : [];
     }

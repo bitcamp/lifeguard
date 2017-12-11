@@ -50,14 +50,14 @@ const processLifeguardCommand = async (client: SlackClient, res: any, teamId: st
             textTokens[0] === 'admin' ||
             textTokens[0] === 'lifejacket' ||
             textTokens[0] === 'available' ||
-		    textTokens[0] === 'away' ||
-		    textTokens[0] === 'whoami')) {
+            textTokens[0] === 'away' ||
+            textTokens[0] === 'whoami')) {
         return sendErrorResponse(res, BAD_REQUEST_MESSAGE);
     }
 
-	sendRequestAcknowledgedResponse(res, firstName);
+    sendRequestAcknowledgedResponse(res, firstName);
 
-	if (textTokens[0] === 'list') {
+    if (textTokens[0] === 'list') {
         let skills: Array<string> = lifeguardPool.getAllSkills();
         skills.sort();
         skills = skills.map((s) => '`' + s + '`'); // can't do string interpolation here...
@@ -112,16 +112,16 @@ const processLifeguardCommand = async (client: SlackClient, res: any, teamId: st
             const group: GroupResponse = await client.createChannel(newChannelName);
             const newChannelId: string = group.group.id;
 
-			const inviteMentorPromise = client.inviteUserToChannel(newChannelId, mentorId);
-			const inviteUserPromise = client.inviteUserToChannel(newChannelId, userId);
-	        const postMessagePromise = client.postMessage(newChannelId, `Hi ${firstName} \
+            const inviteMentorPromise = client.inviteUserToChannel(newChannelId, mentorId);
+            const inviteUserPromise = client.inviteUserToChannel(newChannelId, userId);
+            const postMessagePromise = client.postMessage(newChannelId, `Hi ${firstName} \
 and ${mentorFirstName}!`);
-	        const postMessagePromise2 = client.postMessage(newChannelId, `${mentorFirstName}, here is \
+            const postMessagePromise2 = client.postMessage(newChannelId, `${mentorFirstName}, here is \
 ${firstName}'s question: *${question}*. After you finish helping ${firstName}, please type \
 \`/lifeguard available\` to mark yourself as available for helping out your next hacker!`);
 
-	        await Promise.all([inviteMentorPromise, inviteUserPromise, postMessagePromise, postMessagePromise2]);
-			await client.leaveChannel(newChannelId);
+            await Promise.all([inviteMentorPromise, inviteUserPromise, postMessagePromise, postMessagePromise2]);
+            await client.leaveChannel(newChannelId);
 
             sendDelayedMessage(responseUrl, `Found a new mentor: \`${mentorInfo.user.name}\`. \
 You should have been added to a new private channel called \`${newChannelName}\` to \
@@ -131,24 +131,24 @@ communicate with your mentor.`);
         const wasABusyMentor: boolean = lifeguardPool.finishMentoring(userId);
 
         if (wasABusyMentor) {
-	        sendDelayedMessage(responseUrl, `You have been released! You are now available to take on more tasks.`);
+            sendDelayedMessage(responseUrl, `You have been released! You are now available to take on more tasks.`);
         } else {
             sendDelayedMessage(responseUrl, 'Your status is not available!');
         }
     } else if (textTokens[0] === 'away') {
-	    const success: boolean = lifeguardPool.setBusyMentor(userId);
+        const success: boolean = lifeguardPool.setBusyMentor(userId);
 
-	    if (success) {
-	        sendDelayedMessage(responseUrl, 'Your status has been set to away!');
+        if (success) {
+            sendDelayedMessage(responseUrl, 'Your status has been set to away!');
         } else {
-	        sendDelayedMessage(responseUrl, 'Your status is already set to away/busy!');
+            sendDelayedMessage(responseUrl, 'Your status is already set to away/busy!');
         }
     } else if (textTokens[0] === 'whoami') {
         let skills: Array<string> = lifeguardPool.getSkillsForMentor(userId);
         skills.sort();
-		skills = skills.map((s) => '`' + s + '`'); // can't do string interpolation here...
+        skills = skills.map((s) => '`' + s + '`'); // can't do string interpolation here...
 
-		if (skills.length > 0) {
+        if (skills.length > 0) {
             sendDelayedMessage(responseUrl, `You are currently a mentor for ${skills.join(', ')}`);
         } else {
             sendDelayedMessage(responseUrl, 'You are not currently a mentor for any skills!');

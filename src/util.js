@@ -17,11 +17,11 @@ const NOT_ENOUGH_ARGUMENTS_MESSAGE: string = 'The command you entered requires m
  * @param delayed Should this be a delayed response?
  */
 const sendErrorResponse = (res: any, message: string, delayed: boolean=false, responseUrl: string=''): any => {
-	if (delayed) {
-		return sendDelayedMessage(responseUrl, message);
-	} else {
-		return res.send({text: `Error in your request: ${message} Type \`/lifeguard help\` for assistance.`});
-	}
+    if (delayed) {
+        return sendDelayedMessage(responseUrl, message);
+    } else {
+        return res.send({text: `Error in your request: ${message} Type \`/lifeguard help\` for assistance.`});
+    }
 };
 
 /**
@@ -29,24 +29,24 @@ const sendErrorResponse = (res: any, message: string, delayed: boolean=false, re
  * with a 200 to the original request, but need more time for post-processing.
  */
 const sendDelayedMessage = (responseUrl: string, text: string): void => {
-	const options = {
-		method: 'POST',
-		uri: responseUrl,
-		body: {
-			text,
-		},
-		json: true,
-	};
+    const options = {
+        method: 'POST',
+        uri: responseUrl,
+        body: {
+            text,
+        },
+        json: true,
+    };
 
-	request(options);
+    request(options);
 }
 
 module.exports = {
-	sendDelayedMessage,
-	sendErrorResponse,
-	BAD_REQUEST_MESSAGE,
-	INTERNAL_ERROR_MESSAGE,
-	ADMIN_PASSWORD,
-	BAD_ADMIN_REQUEST_MESSAGE,
-	NOT_ENOUGH_ARGUMENTS_MESSAGE,
+    sendDelayedMessage,
+    sendErrorResponse,
+    BAD_REQUEST_MESSAGE,
+    INTERNAL_ERROR_MESSAGE,
+    ADMIN_PASSWORD,
+    BAD_ADMIN_REQUEST_MESSAGE,
+    NOT_ENOUGH_ARGUMENTS_MESSAGE,
 };
