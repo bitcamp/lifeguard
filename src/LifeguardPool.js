@@ -38,10 +38,10 @@ class LifeguardPool {
 
         for (const mentor of mentors) {
             if (mentor.busy) {
-                this._busyMentors.add(mentor.slackId);
+                this._busyMentors.add(mentor.id);
             }
 
-            this._mentorsToSkills.set(mentor.slackId, mentor.skills);
+            this._mentorsToSkills.set(mentor.id, mentor.skills);
         }
 
         for (const skill of skills) {
