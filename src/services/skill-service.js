@@ -10,7 +10,7 @@ async function getAllSkills(): Promise<Array<Object>> {
 	return skills.map(skill => {
 		return {
 			skill: skill.skill,
-			mentors: skills.mentors,
+			mentors: skill.mentors,
 		};
 	});
 }
