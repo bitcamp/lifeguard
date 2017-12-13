@@ -5,15 +5,20 @@ function addSkill(skill: string, initialMentor: string): Promise<Object> {
 	return newSkill.save();
 }
 
-async function getAllSkills(): Promise<Array<string>> {
+async function getAllSkills(): Promise<Array<Object>> {
 	const skills = await Skill.find().exec();
-	return skills.map(s => s.skill).sort();
+	return skills.map(skill => {
+		return {
+			skill: skill.skill,
+			mentors: skills.mentors,
+		};
+	});
 }
 
 async function addMentorForSkill(skill: string, mentor: string): Promise<void> {
-	const skillDocument = await Skill.findOne({skill}).exec();
+	let skillDocument = await Skill.findOne({skill}).exec();
 	if (skillDocument == null) {
-		throw new Error('Skill does not exist!');
+		skillDocument = new Skill({skill, mentors: []});
 	}
 
 	if (!skillDocument.mentors.includes(mentor)) {

@@ -1,5 +1,7 @@
 // @flow
 
+const mentorService = require('./services/mentor-service');
+const skillService = require('./services/skill-service');
 
 /**
  * This class manages the mentor queue and oversees all mentor assignments and
@@ -21,18 +23,40 @@ class LifeguardPool {
     _busyMentors: Set<string>;
 
     constructor(): void {
-        this._skillsToMentors = new Map();
-        this._skillsToMentorsQueue = new Map();
-        this._mentorsToSkills = new Map();
-        this._busyMentors = new Set();
+        this._populateFields();
+        this._enableLogging();
+    }
 
-        setInterval(() => {
-            console.log('=============================================');
-            console.log(this._skillsToMentors);
-            console.log(this._skillsToMentorsQueue);
-            console.log(this._mentorsToSkills);
-            console.log(this._busyMentors);
-        }, 30000);
+    async _populateFields(): Promise<void> {
+	    this._skillsToMentors = new Map();
+	    this._skillsToMentorsQueue = new Map();
+	    this._mentorsToSkills = new Map();
+	    this._busyMentors = new Set();
+
+        const mentors = await mentorService.getAllMentors();
+        const skills = await skillService.getAllSkills();
+
+        for (const mentor of mentors) {
+            if (mentor.busy) {
+                this._busyMentors.add(mentor.slackId);
+            }
+
+            this._mentorsToSkills.set(mentor.slackId, mentor.skills);
+        }
+
+        for (const skill of skills) {
+            this._skillsToMentors.set(skill.skill, skill.mentors);
+        }
+    }
+
+    _enableLogging(): void {
+	    setInterval(() => {
+		    console.log('=============================================');
+		    console.log(this._skillsToMentors);
+		    console.log(this._skillsToMentorsQueue);
+		    console.log(this._mentorsToSkills);
+		    console.log(this._busyMentors);
+	    }, 30000);
     }
 
     /**
@@ -48,6 +72,9 @@ class LifeguardPool {
     addMentor(userId: string, skill: string): void {
         // mark mentor as available again if busy
         this.finishMentoring(userId);
+
+        mentorService.addSkillForMentor(userId, skill);
+        skillService.addMentorForSkill(skill, userId);
 
         // Add skill to mentors map
         if (!this._mentorsToSkills.has(userId)) {
@@ -153,6 +180,7 @@ class LifeguardPool {
 
         // this mentor is now busy
         this._busyMentors.add(userId);
+        mentorService.setMentorAsBusy(userId);
 
         // remove this mentor from all the other queues
         const skills: ?Array<string> = this._mentorsToSkills.get(userId);
@@ -187,6 +215,7 @@ class LifeguardPool {
 
         // Mark as available again
         this._busyMentors.delete(userId);
+	    mentorService.setMentorAsAvailable(userId);
 
         // Place mentor back in queue for all of his skills
         const skills: ?Array<string> = this._mentorsToSkills.get(userId);

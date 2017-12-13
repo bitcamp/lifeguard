@@ -5,6 +5,17 @@ function addMentor(id: string, initialSkill: string): Promise<Object> {
 	return newMentor.save();
 }
 
+async function getAllMentors(): Promise<Array<Object>> {
+	const mentors = await Mentor.find().exec();
+	return mentors.map(mentor => {
+		return {
+			id: mentor.slackId,
+			busy: mentor.busy,
+			skills: mentor.skills,
+		};
+	});
+}
+
 function setMentorAsBusy(id: string): Promise<Object> {
 	return Mentor.findOneAndUpdate({ slackId: id }, { $set: { busy: true } }, { new: true }).exec();
 }
@@ -14,9 +25,9 @@ function setMentorAsAvailable(id: string): Promise<Object> {
 }
 
 async function addSkillForMentor(id: string, skill: string): Promise<void> {
-	const mentor = await Mentor.findOne({slackId: id}).exec();
+	let mentor = await Mentor.findOne({slackId: id}).exec();
 	if (mentor == null) {
-		throw new Error('Mentor does not exist!');
+		mentor = new Mentor({slackId: id, skills: []});
 	}
 
 	if (!mentor.skills.includes(skill)) {
@@ -49,6 +60,7 @@ function getBusyMentors(): Promise<Object> {
 module.exports = {
 	addMentor,
 	addSkillForMentor,
+	getAllMentors,
 	getBusyMentors,
 	removeSkillForMentor,
 	setMentorAsAvailable,

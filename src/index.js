@@ -24,7 +24,10 @@ const port: string = process.env.PORT || '5000';
 const client: SlackClient = getClient(token);
 const mongoDbUrl: string = process.env.MONGODB || '';
 
-mongoose.connect(mongoDbUrl);
+mongoose.connect(mongoDbUrl, {
+	useMongoClient: true,
+	connectTimeoutMS: 3000,
+});
 mongoose.connection.on('error', () => {
 	console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
 	process.exit(1);
