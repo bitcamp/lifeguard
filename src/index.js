@@ -5,6 +5,11 @@ require('dotenv').config();
 
 const bodyParser = require('body-parser');
 const express = require('express');
+const mongoose = require('mongoose');
+
+// Use native ES6 Promises
+mongoose.Promise = global.Promise;
+
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -17,6 +22,13 @@ const {sendErrorResponse, INTERNAL_ERROR_MESSAGE, BAD_REQUEST_MESSAGE} = require
 const token: string = process.env.SLACK_API_TOKEN || '';
 const port: string = process.env.PORT || '5000';
 const client: SlackClient = getClient(token);
+const mongoDbUrl: string = process.env.MONGODB || '';
+
+mongoose.connect(mongoDbUrl);
+mongoose.connection.on('error', () => {
+	console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
+	process.exit(1);
+});
 
 
 app.post('/lifeguard', (req, res): any => {
