@@ -46,6 +46,7 @@ class LifeguardPool {
 
         for (const skill of skills) {
             this._skillsToMentors.set(skill.skill, skill.mentors);
+            this._skillsToMentorsQueue.set(skill.skill, shuffleArray(skill.mentors));
         }
     }
 
