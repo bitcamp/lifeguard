@@ -1,3 +1,5 @@
+// @flow
+
 const Skill = require('../models/Skill');
 
 function addSkill(skill: string, initialMentor: string): Promise<Object> {

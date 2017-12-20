@@ -1,3 +1,5 @@
+// @flow
+
 const Mentor = require('../models/Mentor');
 
 function addMentor(id: string, initialSkill: string): Promise<Object> {
