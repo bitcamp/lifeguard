@@ -55,15 +55,10 @@ async function removeSkillForMentor(id: string, skill: string): Promise<void> {
 	return mentor.skills.length === 0 ? Mentor.findOneAndRemove({slackId: id}).exec() : mentor.save();
 }
 
-function getBusyMentors(): Promise<Object> {
-	return Mentor.find().where('busy').equals(true);
-}
-
 module.exports = {
 	addMentor,
 	addSkillForMentor,
 	getAllMentors,
-	getBusyMentors,
 	removeSkillForMentor,
 	setMentorAsAvailable,
 	setMentorAsBusy,

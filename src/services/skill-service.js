@@ -2,11 +2,6 @@
 
 const Skill = require('../models/Skill');
 
-function addSkill(skill: string, initialMentor: string): Promise<Object> {
-	const newSkill = new Skill({skill, mentors: [initialMentor]});
-	return newSkill.save();
-}
-
 async function getAllSkills(): Promise<Array<Object>> {
 	const skills = await Skill.find().exec();
 	return skills.map(skill => {
@@ -48,7 +43,6 @@ async function removeMentorForSkill(skill: string, mentor: string): Promise<void
 
 module.exports = {
 	addMentorForSkill,
-	addSkill,
 	getAllSkills,
 	removeMentorForSkill,
 };
