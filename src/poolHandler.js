@@ -73,15 +73,14 @@ const processLifeguardCommand = async (client: SlackClient, res: any, teamId: st
         }
 
         if (textTokens[2] === 'add') {
-            if (textTokens.length < 5) {
+            if (textTokens.length < 4) {
                 return sendErrorResponse(res, NOT_ENOUGH_ARGUMENTS_MESSAGE, true, responseUrl);
             }
 
-            const userId: string = textTokens[3];
-            for (let x: number = 4; x<textTokens.length; x++){
+            for (let x: number = 3; x<textTokens.length; x++){
                 const skill: string = textTokens[x];
                 lifeguardPool.addMentor(userId, skill);
-                sendDelayedMessage(responseUrl, `Successfully added id ${userId} as a mentor for ${skill}!`);
+                sendDelayedMessage(responseUrl, `Successfully added ${firstName} as a mentor for ${skill}!`);
             }
         } else {
             return sendErrorResponse(res, BAD_ADMIN_REQUEST_MESSAGE, true, responseUrl);

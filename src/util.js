@@ -2,7 +2,7 @@ const request = require('request-promise-native');
 
 const BAD_REQUEST_MESSAGE: string = 'Please check the syntax of your message.';
 const INTERNAL_ERROR_MESSAGE: string = `We've encountered an internal error. Please reach out to @allen and describe what you were doing.`;
-const ADMIN_PASSWORD: string = 'bitcampsux';
+const ADMIN_PASSWORD: string = 'myt2018';
 const BAD_ADMIN_REQUEST_MESSAGE: string = 'Stop trying to mess with Lifeguard!';
 const NOT_ENOUGH_ARGUMENTS_MESSAGE: string = 'The command you entered requires more arguments.';
 
