@@ -78,10 +78,11 @@ const processLifeguardCommand = async (client: SlackClient, res: any, teamId: st
             }
 
             const userId: string = textTokens[3];
-            const skill: string = textTokens[4];
-
-            lifeguardPool.addMentor(userId, skill);
-            sendDelayedMessage(responseUrl, `Successfully added id ${userId} as a mentor for ${skill}!`);
+            for (let x: number = 4; x<textTokens.length; x++){
+                const skill: string = textTokens[x];
+                lifeguardPool.addMentor(userId, skill);
+                sendDelayedMessage(responseUrl, `Successfully added id ${userId} as a mentor for ${skill}!`);
+            }
         } else {
             return sendErrorResponse(res, BAD_ADMIN_REQUEST_MESSAGE, true, responseUrl);
         }
@@ -108,7 +109,7 @@ const processLifeguardCommand = async (client: SlackClient, res: any, teamId: st
             const mentorInfo: UserResponse = await client.getUserInfo(mentorId)
             const mentorFirstName: string = getFirstName(mentorInfo);
 
-            const newChannelName = getChannelName(userId, skill);
+            const newChannelName = getChannelName(userId, skill, firstName, mentorFirstName);
             const group: GroupResponse = await client.createChannel(newChannelName);
             const newChannelId: string = group.group.id;
 
@@ -158,9 +159,9 @@ communicate with your mentor.`);
     setLifeguardPool(teamId, lifeguardPool);
 };
 
-function getChannelName(id: string, skill: string): string {
-    const randomString = Math.random().toString(36).substring(0, 6);
-    return `${skill}-${id.substring(0, 3)}-${randomString}`;
+function getChannelName(id: string, skill: string, firstName: string, mentorName:string): string {
+    const randomString = Math.random().toString(36).substring(0, 2);
+    return `${skill}-help: ${mentorName} + ${firstName} [${randomString}]`;
 }
 
 function sendRequestAcknowledgedResponse(res: any, firstName: string): any {
