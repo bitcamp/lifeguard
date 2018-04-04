@@ -73,15 +73,15 @@ const processLifeguardCommand = async (client: SlackClient, res: any, teamId: st
         }
 
         if (textTokens[2] === 'add') {
-            if (textTokens.length < 5) {
+            if (textTokens.length < 4) {
                 return sendErrorResponse(res, NOT_ENOUGH_ARGUMENTS_MESSAGE, true, responseUrl);
             }
 
-            const userId: string = textTokens[3];
-            const skill: string = textTokens[4];
-
-            lifeguardPool.addMentor(userId, skill);
-            sendDelayedMessage(responseUrl, `Successfully added id ${userId} as a mentor for ${skill}!`);
+            for (let x: number = 3; x < textTokens.length; x++){
+                const skill: string = textTokens[x];
+                lifeguardPool.addMentor(userId, skill);
+                sendDelayedMessage(responseUrl, `Successfully added ${firstName} as a mentor for ${skill}!`);
+            }
         } else {
             return sendErrorResponse(res, BAD_ADMIN_REQUEST_MESSAGE, true, responseUrl);
         }
@@ -108,7 +108,7 @@ const processLifeguardCommand = async (client: SlackClient, res: any, teamId: st
             const mentorInfo: UserResponse = await client.getUserInfo(mentorId)
             const mentorFirstName: string = getFirstName(mentorInfo);
 
-            const newChannelName = getChannelName(userId, skill);
+            const newChannelName = getChannelName(userId, skill, firstName, mentorFirstName);
             const group: GroupResponse = await client.createChannel(newChannelName);
             const newChannelId: string = group.group.id;
 
@@ -158,9 +158,12 @@ communicate with your mentor.`);
     setLifeguardPool(teamId, lifeguardPool);
 };
 
-function getChannelName(id: string, skill: string): string {
+function getChannelName(id: string, skill: string, firstName: string, mentorName:string): string {
     const randomString = Math.random().toString(36).substring(0, 6);
-    return `${skill}-${id.substring(0, 3)}-${randomString}`;
+    const skillUpdated = (skill.length > 4) ? skill.substring(0, 4) : skill;
+    const firstNameUpdated = (firstName.length > 5) ? firstName.substring(0, 5) : firstName;
+    const mentorNameUpdated = (mentorName.length > 5) ? mentorName.substring(0, 5) : mentorName;
+    return `${skillUpdated}-${mentorNameUpdated}-${firstNameUpdated}-${randomString}`;
 }
 
 function sendRequestAcknowledgedResponse(res: any, firstName: string): any {

@@ -33,6 +33,11 @@ mongoose.connection.on('error', () => {
 	process.exit(1);
 });
 
+app.get('/', (req, res): any => {
+	console.log('App is working!');
+	res.send('App is working!');
+});
+
 
 app.post('/lifeguard', (req, res): any => {
     const params = req.body;
